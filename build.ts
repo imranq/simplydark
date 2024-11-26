@@ -1,17 +1,17 @@
+import { manifest } from './src/manifest';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const DIST_DIR = 'dist';
-
 // Ensure dist directory exists
-if (!fs.existsSync(DIST_DIR)) {
-  fs.mkdirSync(DIST_DIR);
+const distDir = path.join(__dirname, 'dist');
+if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir);
 }
 
-// Copy manifest.json to dist
-fs.copyFileSync(
-  path.join('manifest.json'),
-  path.join(DIST_DIR, 'manifest.json')
+// Write manifest.json
+fs.writeFileSync(
+    path.join(distDir, 'manifest.json'),
+    JSON.stringify(manifest, null, 2)
 );
 
-console.log('✅ Build completed successfully!');
+console.log('Manifest file generated in dist/manifest.json');

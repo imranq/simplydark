@@ -5,9 +5,7 @@
   "description": "A simple dark mode toggle extension",
   "permissions": [
     "activeTab",
-    "storage",
-    "scripting",
-    "tabs"
+    "scripting"
   ],
   "host_permissions": [
     "file:///*"
