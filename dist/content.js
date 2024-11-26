@@ -1,37 +1,51 @@
-"use strict";
+'use strict';
+const OVERLAY_ID = 'darkModeOverlay1233';
+const OVERLAY_CSS = `
+  position: fixed !important;
+  pointer-events: none !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: white !important;
+  mix-blend-mode: difference !important;
+  z-index: 2147483647 !important;
+`;
 let darkModeOverlay = null;
 function createOverlay() {
     console.log("[Dark Mode] Creating overlay");
     const overlay = document.createElement("div");
-    const css = `
-        position: fixed;
-        pointer-events: none;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: white;
-        mix-blend-mode: difference;
-        z-index: 2147483647;
-    `;
-    overlay.setAttribute("id", "darkModeOverlay1233");
-    overlay.setAttribute("style", css);
+    overlay.id = OVERLAY_ID;
+    overlay.setAttribute("style", OVERLAY_CSS);
     return overlay;
 }
 function isPDF() {
-    const isPDFPath = location.pathname.toLowerCase().endsWith('.pdf');
-    console.log("[Dark Mode] PDF Detection:", isPDFPath);
-    return isPDFPath;
+    return location.pathname.toLowerCase().endsWith('.pdf');
 }
-function injectPDFScript() {
-    console.log("[Dark Mode] Injecting PDF script");
-    chrome.runtime.sendMessage({ action: "inject-pdf-script" });
+function handlePDFMode() {
+    console.log("[Dark Mode] Handling PDF mode");
+    let overlay = document.getElementById(OVERLAY_ID);
+    if (overlay) {
+        overlay.remove();
+        return;
+    }
+    const pdfViewer = document.querySelector('embed[type="application/x-google-chrome-pdf"]');
+    console.log(pdfViewer);
+    overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    overlay.setAttribute('style', OVERLAY_CSS);
+    if (pdfViewer?.parentElement) {
+        pdfViewer.parentElement.insertBefore(overlay, pdfViewer.nextSibling);
+    }
+    else {
+        document.documentElement.appendChild(overlay);
+    }
 }
 function toggleDarkMode() {
     console.log("[Dark Mode] Toggle called");
     if (isPDF()) {
-        console.log("[Dark Mode] PDF detected, using script injection");
-        injectPDFScript(); //needed
+        console.log("[Dark Mode] PDF detected");
+        handlePDFMode();
         return;
     }
     if (darkModeOverlay) {
@@ -44,7 +58,6 @@ function toggleDarkMode() {
     darkModeOverlay = createOverlay();
     document.body.appendChild(darkModeOverlay);
 }
-// Listen for messages from the background script
 chrome.runtime.onMessage.addListener((message) => {
     console.log("[Dark Mode] Received message:", message);
     if (message.action === "toggle-dark-mode") {

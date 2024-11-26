@@ -34,7 +34,7 @@
 ## Usage
 
 ### Toggle Dark Mode
-- **Keyboard Shortcut**: Press `Ctrl+Shift+E` (Windows/Linux) or `Command+Shift+E` (macOS) to toggle dark mode on/off.
+- **Keyboard Shortcut**: Press `Ctrl+Alt+D` (Windows/Linux) or `Option+Shift+D` (macOS) to toggle dark mode on/off.
 - **Toolbar Icon**: Click the extension icon to activate or deactivate dark mode.
 
 ### For PDFs
