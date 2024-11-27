@@ -17,7 +17,7 @@ const OVERLAY_CSS = `
 let darkModeOverlay: HTMLDivElement | null = null;
 
 function createOverlay(): HTMLDivElement {
-  console.log("[Dark Mode] Creating overlay");
+  console.log("[Simply Dark] Creating overlay");
   const overlay = document.createElement("div");
   overlay.id = OVERLAY_ID;
   overlay.setAttribute("style", OVERLAY_CSS);
@@ -29,7 +29,7 @@ function isPDF(): boolean {
 }
 
 function handlePDFMode(): void {
-  console.log("[Dark Mode] Handling PDF mode");
+  console.log("[Simply Dark] Handling PDF mode");
   let overlay = document.getElementById(OVERLAY_ID);
   if (overlay) {
     overlay.remove();
@@ -50,22 +50,22 @@ function handlePDFMode(): void {
 }
 
 function toggleDarkMode(): void {
-  console.log("[Dark Mode] Toggle called");
+  console.log("[Simply Dark] Toggle called");
   
   if (isPDF()) {
-    console.log("[Dark Mode] PDF detected");
+    console.log("[Simply Dark] PDF detected");
     handlePDFMode();
     return;
   }
 
   if (darkModeOverlay) {
-    console.log("[Dark Mode] Removing existing overlay");
+    console.log("[Simply Dark] Removing existing overlay");
     darkModeOverlay.remove();
     darkModeOverlay = null;
     return;
   }
 
-  console.log("[Dark Mode] Adding overlay for non-PDF");
+  console.log("[Simply Dark] Adding overlay for non-PDF");
   darkModeOverlay = createOverlay();
   document.body.appendChild(darkModeOverlay);
 }
@@ -75,10 +75,10 @@ interface DarkModeMessage {
 }
 
 chrome.runtime.onMessage.addListener((message: DarkModeMessage) => {
-  console.log("[Dark Mode] Received message:", message);
+  console.log("[Simply Dark] Received message:", message);
   if (message.action === "toggle-dark-mode") {
     toggleDarkMode();
   }
 });
 
-console.log("[Dark Mode] Content script loaded");
+console.log("[Simply Dark] Content script loaded");

@@ -3,7 +3,10 @@
   "name": "Simply Dark",
   "version": "1.0",
   "description": "A simple dark mode toggle extension",
-  "permissions": ["activeTab"],
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
   "action": {},
   "background": {
     "service_worker": "background.js"
@@ -14,14 +17,6 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle",
-      "all_frames": true
-    }
-  ],
   "commands": {
     "toggle-dark-mode": {
       "suggested_key": {

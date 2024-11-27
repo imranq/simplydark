@@ -76,5 +76,6 @@ Enjoy browsing in dark mode with **Simply Dark**! 😊
 
 ## To Do
 * Create website with screenshot
-* Publish to chrome web store
-* Create icon with on/off modes
+* Create icon with on/off modes dynamically
+* Update PDF darkmode to only target document contents [could be subsumed by smart dark mode]
+* Smart dark mode to avoid images / already dark spots
