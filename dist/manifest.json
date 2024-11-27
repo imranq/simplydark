@@ -3,7 +3,7 @@
   "name": "Simply Dark",
   "version": "1.0",
   "description": "A simple dark mode toggle extension",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab"],
   "action": {},
   "background": {
     "service_worker": "background.js"
