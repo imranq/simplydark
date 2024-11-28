@@ -83,7 +83,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 4rem 2rem;
+    padding: 1rem 2rem;
 }
 
 /* Feature Cards with Hover Effects */
@@ -197,7 +197,7 @@ body {
 
 /* Screenshots */
 .screenshots {
-    margin-top: 6rem;
+    margin-top: 0.1rem;
 }
 
 .screenshots h2 {
@@ -313,5 +313,54 @@ body {
     }
     .github-corner .octo-arm {
         animation: octocat-wave 560ms ease-in-out;
+    }
+}
+
+/* Shortcut Container */
+.shortcut-container {
+    margin: 1.5rem 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 1.4rem;
+    color: white;
+}
+
+.shortcut-container p {
+    margin: 0;
+    font-size: inherit;
+}
+
+.keyboard-shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--primary-color);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    font-weight: 600;
+    min-width: 1.8rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.keyboard-shortcut:hover kbd {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .shortcut-container {
+        flex-direction: column;
+        text-align: center;
+        font-size: 1.2rem;
     }
 }
