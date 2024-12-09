@@ -75,7 +75,8 @@ Enjoy browsing in dark mode with **Simply Dark**! 😊
 ---
 
 ## To Do
-* Create website with screenshot
 * Create icon with on/off modes dynamically
 * Update PDF darkmode to only target document contents [could be subsumed by smart dark mode]
 * Smart dark mode to avoid images / already dark spots
+* Persist darkmode on same website per tab
+  * If the base url is the same, then keep the dark mode on, but as soon as the user leaves the url we turn it off

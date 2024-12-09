@@ -28,56 +28,61 @@ function isPDF(): boolean {
   return location.pathname.toLowerCase().endsWith('.pdf');
 }
 
-function handlePDFMode(): void {
+function handlePDFMode(enable: boolean): void {
   console.log("[Simply Dark] Handling PDF mode");
   let overlay = document.getElementById(OVERLAY_ID);
-  if (overlay) {
+  
+  if (!enable && overlay) {
     overlay.remove();
     return;
   }
 
-  const pdfViewer = document.querySelector('embed[type="application/x-google-chrome-pdf"]');
-  console.log(pdfViewer);
-  overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID;
-  overlay.setAttribute('style', OVERLAY_CSS);
+  if (enable && !overlay) {
+    const pdfViewer = document.querySelector('embed[type="application/x-google-chrome-pdf"]');
+    overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    overlay.setAttribute('style', OVERLAY_CSS);
 
-  if (pdfViewer?.parentElement) {
-    pdfViewer.parentElement.insertBefore(overlay, pdfViewer.nextSibling);
-  } else {
-    document.documentElement.appendChild(overlay);
+    if (pdfViewer?.parentElement) {
+      pdfViewer.parentElement.insertBefore(overlay, pdfViewer.nextSibling);
+    } else {
+      document.documentElement.appendChild(overlay);
+    }
   }
 }
 
-function toggleDarkMode(): void {
-  console.log("[Simply Dark] Toggle called");
+function setDarkMode(enable: boolean): void {
+  console.log("[Simply Dark] Setting dark mode:", enable);
   
   if (isPDF()) {
     console.log("[Simply Dark] PDF detected");
-    handlePDFMode();
+    handlePDFMode(enable);
     return;
   }
 
-  if (darkModeOverlay) {
+  if (!enable && darkModeOverlay) {
     console.log("[Simply Dark] Removing existing overlay");
     darkModeOverlay.remove();
     darkModeOverlay = null;
     return;
   }
 
-  console.log("[Simply Dark] Adding overlay for non-PDF");
-  darkModeOverlay = createOverlay();
-  document.body.appendChild(darkModeOverlay);
+  if (enable && !darkModeOverlay) {
+    console.log("[Simply Dark] Adding overlay for non-PDF");
+    darkModeOverlay = createOverlay();
+    document.body.appendChild(darkModeOverlay);
+  }
 }
 
 interface DarkModeMessage {
   action: string;
+  state?: boolean;
 }
 
 chrome.runtime.onMessage.addListener((message: DarkModeMessage) => {
   console.log("[Simply Dark] Received message:", message);
   if (message.action === "toggle-dark-mode") {
-    toggleDarkMode();
+    setDarkMode(message.state || false);
   }
 });
 
