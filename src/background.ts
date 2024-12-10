@@ -10,6 +10,10 @@ interface DarkModeStorage {
 async function getDomain(url: string): Promise<string> {
   try {
     const urlObj = new URL(url);
+    // For local files, use the full path as the "domain"
+    if (urlObj.protocol === 'file:') {
+      return url;
+    }
     return urlObj.hostname;
   } catch {
     return '';
