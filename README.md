@@ -8,7 +8,10 @@
 
 - **Dark Mode Overlay**: Applies a dark mode effect to any webpage or PDF using a high-contrast overlay.
 - **PDF Support**: Automatically detects PDF files and applies the dark mode overlay.
-- **Icon Toggle**: Quickly activate or deactivate dark mode by clicking the extension's toolbar icon.
+- **Saved Site Rules**: Automatically enables dark mode on sites whose URLs match your rules.
+- **Regular Expression Matching**: Target a whole site or a precise group of pages.
+- **One-click Site Saving**: Open the toolbar popup to add or remove the current site.
+- **Temporary Toggle**: Use the keyboard shortcut to override dark mode for the current page.
 - **Lightweight and Fast**: Minimal performance impact with efficient JavaScript execution.
 
 ---
@@ -33,9 +36,13 @@
 
 ## Usage
 
-### Toggle Dark Mode
-- **Keyboard Shortcut**: Press `Ctrl+Alt+D` (Windows/Linux) or `Option+Shift+D` (macOS) to toggle dark mode on/off.
-- **Toolbar Icon**: Click the extension icon to activate or deactivate dark mode.
+### Save a Site
+- Click the extension icon and choose **Add current site**. The generated rule matches that hostname.
+- Add a custom regular expression to target more specific URLs.
+- Disable or delete saved rules from the popup at any time.
+
+### Temporarily Toggle Dark Mode
+- Press `Alt+Shift+D` (Windows/Linux) or `Option+Shift+D` (macOS). Saved rules take precedence again when they change or the page reloads.
 
 ### For PDFs
 Dark mode is automatically applied to PDF documents. If the overlay does not appear, ensure the extension is enabled for local file access.
@@ -78,5 +85,3 @@ Enjoy browsing in dark mode with **Simply Dark**! 😊
 * Create icon with on/off modes dynamically
 * Update PDF darkmode to only target document contents [could be subsumed by smart dark mode]
 * Smart dark mode to avoid images / already dark spots
-* Persist darkmode on same website per tab
-  * If the base url is the same, then keep the dark mode on, but as soon as the user leaves the url we turn it off

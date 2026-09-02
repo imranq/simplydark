@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simply Dark</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon48.png" alt="">
+      <div>
+        <h1>Simply Dark</h1>
+        <p>Darken sites automatically</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="current">
+        <span class="eyebrow">Current site</span>
+        <strong id="current-site">Loading…</strong>
+        <code id="current-pattern"></code>
+        <button id="current-action" type="button" disabled>Add current site</button>
+      </section>
+
+      <section>
+        <h2>Saved rules</h2>
+        <p class="hint">Rules match the full page URL and ignore letter case.</p>
+        <form id="rule-form">
+          <input id="pattern" type="text" aria-label="Regular expression" placeholder="docs\\.example\\.com/.*" required>
+          <button type="submit">Add</button>
+        </form>
+        <p id="error" class="error" role="alert"></p>
+        <p id="empty" class="empty">No saved sites yet.</p>
+        <ul id="rules"></ul>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

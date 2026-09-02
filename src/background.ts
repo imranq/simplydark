@@ -1,99 +1,44 @@
-interface DarkModeState {
+export {};
+
+interface SiteRule {
+  id: string;
+  pattern: string;
+  enabled: boolean;
+  createdAt: number;
+}
+
+interface LegacyDarkModeState {
   enabled: boolean;
   timestamp: number;
 }
 
-interface DarkModeStorage {
-  [domain: string]: DarkModeState;
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-async function getDomain(url: string): Promise<string> {
-  try {
-    const urlObj = new URL(url);
-    // For local files, use the full path as the "domain"
-    if (urlObj.protocol === 'file:') {
-      return url;
-    }
-    return urlObj.hostname;
-  } catch {
-    return '';
-  }
-}
+// Preserve users' existing hostname preferences after upgrading to regex rules.
+chrome.runtime.onInstalled.addListener(async () => {
+  const stored = await chrome.storage.sync.get(['siteRules', 'darkModeSites']);
+  if (Array.isArray(stored.siteRules) || !stored.darkModeSites) return;
 
-async function getDarkModeState(domain: string): Promise<boolean> {
-  const result = await chrome.storage.sync.get('darkModeSites');
-  const sites: DarkModeStorage = result.darkModeSites || {};
-  return sites[domain]?.enabled || false;
-}
-
-async function toggleDarkModeForDomain(domain: string): Promise<void> {
-  const result = await chrome.storage.sync.get('darkModeSites');
-  const sites: DarkModeStorage = result.darkModeSites || {};
-  
-  if (sites[domain]?.enabled) {
-    delete sites[domain];
-  } else {
-    sites[domain] = {
+  const legacy = stored.darkModeSites as Record<string, LegacyDarkModeState>;
+  const siteRules: SiteRule[] = Object.entries(legacy)
+    .filter(([, state]) => state.enabled)
+    .map(([hostname, state]) => ({
+      id: crypto.randomUUID(),
+      pattern: `^https?://${escapeRegExp(hostname)}(?::\\d+)?(?:/|$)`,
       enabled: true,
-      timestamp: Date.now()
-    };
-  }
-  
-  await chrome.storage.sync.set({ darkModeSites: sites });
-}
+      createdAt: state.timestamp || Date.now(),
+    }));
 
-async function sendToggleMessage() {
+  await chrome.storage.sync.set({ siteRules });
+  await chrome.storage.sync.remove('darkModeSites');
+});
+
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command !== 'toggle-dark-mode') return;
+
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id || !tab.url) return;
-  
-  const domain = await getDomain(tab.url);
-  if (!domain) return;
-
-  console.log("Running dark mode script");
-  
-  // First, inject the content script if it hasn't been injected yet
-  await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: ['content.js']
-  });
-  
-  // Toggle the domain's dark mode state
-  await toggleDarkModeForDomain(domain);
-  
-  // Then send the toggle message with the new state
-  const isDarkMode = await getDarkModeState(domain);
-  chrome.tabs.sendMessage(tab.id, { 
-    action: "toggle-dark-mode",
-    state: isDarkMode
-  });
-}
-
-// Check dark mode state when a tab is updated
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url) {
-    const domain = await getDomain(tab.url);
-    if (!domain) return;
-
-    const isDarkMode = await getDarkModeState(domain);
-    if (isDarkMode) {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        files: ['content.js']
-      });
-      
-      chrome.tabs.sendMessage(tabId, { 
-        action: "toggle-dark-mode",
-        state: true
-      });
-    }
-  }
-});
-
-chrome.commands.onCommand.addListener((command) => {
-  if (command === "toggle-dark-mode") sendToggleMessage();
-});
-
-chrome.action.onClicked.addListener(() => {
-  console.log("Running dark mode script");
-  sendToggleMessage();
+  if (!tab?.id) return;
+  chrome.tabs.sendMessage(tab.id, { action: 'toggle-dark-mode-once' }).catch(() => {});
 });

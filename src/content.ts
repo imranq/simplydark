@@ -15,6 +15,14 @@ const OVERLAY_CSS = `
 `;
 
 let darkModeOverlay: HTMLDivElement | null = null;
+let sessionOverride: boolean | null = null;
+
+interface SiteRule {
+  id: string;
+  pattern: string;
+  enabled: boolean;
+  createdAt: number;
+}
 
 function createOverlay(): HTMLDivElement {
   console.log("[Simply Dark] Creating overlay");
@@ -70,7 +78,7 @@ function setDarkMode(enable: boolean): void {
   if (enable && !darkModeOverlay) {
     console.log("[Simply Dark] Adding overlay for non-PDF");
     darkModeOverlay = createOverlay();
-    document.body.appendChild(darkModeOverlay);
+    (document.body || document.documentElement).appendChild(darkModeOverlay);
   }
 }
 
@@ -84,6 +92,54 @@ chrome.runtime.onMessage.addListener((message: DarkModeMessage) => {
   if (message.action === "toggle-dark-mode") {
     setDarkMode(message.state || false);
   }
+  if (message.action === "toggle-dark-mode-once") {
+    sessionOverride = !Boolean(document.getElementById(OVERLAY_ID));
+    setDarkMode(sessionOverride);
+  }
+  if (message.action === 'apply-saved-rules') {
+    sessionOverride = null;
+    void applySavedRules();
+  }
 });
 
+function matchesRule(url: string, rule: SiteRule): boolean {
+  if (!rule.enabled) return false;
+  try {
+    return new RegExp(rule.pattern, 'i').test(url);
+  } catch {
+    return false;
+  }
+}
+
+function getSiteRules(): Promise<SiteRule[]> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get('siteRules', (result) => {
+      const error = chrome.runtime.lastError;
+      if (error) reject(new Error(error.message));
+      else resolve(Array.isArray(result.siteRules) ? result.siteRules : []);
+    });
+  });
+}
+
+async function applySavedRules(): Promise<void> {
+  if (sessionOverride !== null) {
+    setDarkMode(sessionOverride);
+    return;
+  }
+  try {
+    const rules = await getSiteRules();
+    setDarkMode(rules.some((rule) => matchesRule(location.href, rule)));
+  } catch (error) {
+    console.error('[Simply Dark] Could not load saved rules:', error);
+  }
+}
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'sync' && changes.siteRules) {
+    sessionOverride = null;
+    void applySavedRules();
+  }
+});
+
+void applySavedRules();
 console.log("[Simply Dark] Content script loaded");
