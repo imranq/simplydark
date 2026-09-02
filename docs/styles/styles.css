@@ -260,6 +260,50 @@ body {
     opacity: 0.8;
 }
 
+.footer-links {
+    margin-top: 1rem !important;
+}
+
+.footer a {
+    color: white;
+}
+
+/* Privacy policy */
+.policy {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+}
+
+.policy h1 {
+    margin: 1.5rem 0 0.25rem;
+    font-size: 2.75rem;
+}
+
+.policy h2 {
+    margin: 2rem 0 0.5rem;
+    color: var(--primary-color);
+    font-size: 1.35rem;
+}
+
+.policy p {
+    color: #455a64;
+}
+
+.policy a {
+    color: var(--dark-accent);
+}
+
+.policy-date {
+    margin-bottom: 2rem;
+    color: #607d8b !important;
+}
+
+.back-link {
+    font-weight: 600;
+    text-decoration: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .header {
